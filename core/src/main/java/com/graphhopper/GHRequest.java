@@ -44,6 +44,8 @@ public class GHRequest {
     private boolean possibleToAdd = false;
     private Locale locale = Locale.US;
 
+    private double maxSpeed = -1;       // Indicator of maximum speed that can be travelled by the person/vehicle
+
     public GHRequest() {
         this(5);
     }
@@ -261,6 +263,26 @@ public class GHRequest {
 
     public List<String> getPathDetails() {
         return this.pathDetails;
+    }
+
+    /**
+     * Get the value set for maximum speed
+     * @return  double  Maximum speed value
+     */
+    public double getMaxSpeed()
+    {
+        return maxSpeed;
+    }
+
+    /**
+     * Set the value for the maximum speed and add it to the hints
+     * @param speed     Maximum speed that can be travelled by the person/vehicle
+     */
+    public void setMaxSpeed(double speed) {
+        if (speed > 0)
+            hints.put("max_speed", speed);
+
+        maxSpeed = speed;
     }
 
     @Override
