@@ -118,6 +118,21 @@ public class AngleCalc {
         return Math.toDegrees(Helper.round4(orientation))%360;
     }
 
+    /**
+     * Convert the orientation provided to an azimuth in degrees
+     *
+     * @param orientation
+     * @return
+     */
+    public double calcAzimuth(double orientation)
+    {
+        orientation = Math.PI / 2 - orientation;
+        if (orientation < 0)
+            orientation += 2 * Math.PI;
+
+        return Math.toDegrees(Helper.round4(orientation))%360;
+    }
+
     String azimuth2compassPoint(double azimuth) {
 
         String cp;

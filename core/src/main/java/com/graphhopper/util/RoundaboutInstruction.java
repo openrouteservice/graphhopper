@@ -30,6 +30,8 @@ public class RoundaboutInstruction extends Instruction {
     private boolean exited = false;
     private double radian = Double.NaN;
 
+    private int[] roundaboutExitBearings;   // Bearings of exit on the roundabout
+
     public RoundaboutInstruction(int sign, String name, InstructionAnnotation ia, PointList pl) {
         super(sign, name, ia, pl);
     }
@@ -127,5 +129,13 @@ public class RoundaboutInstruction extends Instruction {
             throw new IllegalStateException(indi + "no roundabout indication");
         }
         return str;
+    }
+
+    public int[] getRoundaboutExitBearings() {
+        return roundaboutExitBearings;
+    }
+
+    public void setRoundaboutExitBearings(int[] bearings) {
+        this.roundaboutExitBearings = bearings;
     }
 }
