@@ -29,6 +29,8 @@ public abstract class AbstractWeighting implements Weighting {
     protected final FlagEncoder flagEncoder;
     protected double userMaxSpeed = -1;     // Limit maximum speed to that set by the user (i.e. for special material transport)
 
+    protected AbstractWeighting(FlagEncoder encoder) { this(encoder, null); }
+
     protected AbstractWeighting(FlagEncoder encoder, PMap map) {
         this.flagEncoder = encoder;
         if (!flagEncoder.isRegistered())
