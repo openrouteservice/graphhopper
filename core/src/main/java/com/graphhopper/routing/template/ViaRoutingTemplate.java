@@ -55,7 +55,7 @@ public class ViaRoutingTemplate extends AbstractRoutingTemplate implements Routi
     }
 
     @Override
-    public List<QueryResult> lookup(List<GHPoint> points, FlagEncoder encoder) {
+    public List<QueryResult> lookup(List<GHPoint> points, double[] radiuses, FlagEncoder encoder) {
         if (points.size() < 2)
             throw new IllegalArgumentException("At least 2 points have to be specified, but was:" + points.size());
 
@@ -74,6 +74,11 @@ public class ViaRoutingTemplate extends AbstractRoutingTemplate implements Routi
             }
             if (!res.isValid())
                 ghResponse.addError(new PointNotFoundException("Cannot find point " + placeIndex + ": " + point, placeIndex));
+
+            // Look to make sure that each point is within the area specified. This allows us to specifiy different distances for the search for each point
+            if (radiuses != null && res.getQueryDistance() > radiuses[placeIndex] && radiuses[placeIndex] != -1.0)
+                ghResponse.addError(
+                        new PointNotFoundException("Cannot find point " + placeIndex + ": " + point + " within a radius of " + radiuses[placeIndex] + " meters.", placeIndex));
 
             queryResults.add(res);
         }

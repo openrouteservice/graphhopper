@@ -44,6 +44,8 @@ public class GHRequest {
     private boolean possibleToAdd = false;
     private Locale locale = Locale.US;
 
+    private double[] maxSearchDistances;    // Distances to search for locations within
+
     public GHRequest() {
         this(5);
     }
@@ -261,6 +263,13 @@ public class GHRequest {
 
     public List<String> getPathDetails() {
         return this.pathDetails;
+    }
+
+    // Get the list of maximum search distances
+    public double[] getMaxSearchDistances() { return maxSearchDistances; }
+
+    public void setMaxSearchDistance(double[] distances) {
+        maxSearchDistances = distances;
     }
 
     @Override

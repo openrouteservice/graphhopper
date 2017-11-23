@@ -37,9 +37,10 @@ import java.util.List;
  */
 public interface RoutingTemplate {
     /**
-     * This method takes the query points and returns the looked up QueryResults.
+     * This method takes the query points and returns the looked up QueryResults. It allows the passing of a
+     * series of radiuses which specifiy the distance that points looked up should be within.
      */
-    List<QueryResult> lookup(List<GHPoint> points, FlagEncoder encoder);
+    List<QueryResult> lookup(List<GHPoint> points, double[] radiuses, FlagEncoder encoder);
 
     /**
      * This method returns a list of Path objects which then can be merged to serve one route with
