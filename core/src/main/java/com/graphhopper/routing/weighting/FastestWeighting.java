@@ -62,6 +62,15 @@ public class FastestWeighting extends AbstractWeighting {
         if (speed == 0)
             return Double.POSITIVE_INFINITY;
 
+        // set Maximum speed to be that by the user if available
+        if (userMaxSpeed > 0) {
+            if (speed > userMaxSpeed)
+                speed = userMaxSpeed;
+            else if (speed == maxSpeed && userMaxSpeed > speed) {
+                speed = userMaxSpeed;
+            }
+        }
+
         double time = edge.getDistance() / speed * SPEED_CONV;
 
         // add direction penalties at start/stop/via points
