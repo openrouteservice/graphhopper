@@ -19,6 +19,9 @@ package com.graphhopper.util;
 
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntIndexedContainer;
+import com.graphhopper.storage.ExtendedStorageSequence;
+import com.graphhopper.storage.GraphExtension;
+import com.graphhopper.storage.TurnCostExtension;
 import com.graphhopper.util.shapes.BBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -555,5 +558,32 @@ public class Helper {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Helper method to get turn cost extensions from an ExtendedStorageSequence
+     *
+     * @param extendedStorage       The graph extension to get turn costs extension from
+     *
+     * @return
+     */
+    public static TurnCostExtension getTurnCostExtensions(GraphExtension extendedStorage) {
+        if(extendedStorage instanceof TurnCostExtension) {
+            // do nothing and just return the same object as was passed as a turn cost extension
+            return (TurnCostExtension) extendedStorage;
+        } else if (extendedStorage instanceof ExtendedStorageSequence) {
+            // we need to go through the extensions and find the Turn Cost extension
+            ExtendedStorageSequence ess = (ExtendedStorageSequence) extendedStorage;
+            GraphExtension[] exts = ess.getExtensions();
+            for(int i=0; i<exts.length; i++) {
+                if(exts[i] instanceof TurnCostExtension) {
+                    // We have found the TurnCostExtension so return it
+                    return (TurnCostExtension) exts[i];
+                }
+            }
+        }
+
+        // Not found any TurnCostExtension
+        return null;
     }
 }
