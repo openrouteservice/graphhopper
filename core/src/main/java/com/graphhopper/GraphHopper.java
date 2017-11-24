@@ -1060,6 +1060,11 @@ public class GraphHopper implements GraphHopperAPI {
                         hints(hints).
                         build();
 
+                if (request.getEdgeFilter() != null) {
+                    // Apply custom edge filter to the algorithm options
+                    algoOpts.setEdgeFilter(request.getEdgeFilter());
+                }
+
                 altPaths = routingTemplate.calcPaths(queryGraph, tmpAlgoFactory, algoOpts);
 
                 boolean tmpEnableInstructions = hints.getBool(Routing.INSTRUCTIONS, enableInstructions);

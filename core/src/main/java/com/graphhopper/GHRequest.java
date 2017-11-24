@@ -17,6 +17,7 @@
  */
 package com.graphhopper;
 
+import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.HintsMap;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.shapes.GHPoint;
@@ -43,6 +44,8 @@ public class GHRequest {
     private String algo = "";
     private boolean possibleToAdd = false;
     private Locale locale = Locale.US;
+
+    private EdgeFilter edgeFilter;      // Custom edge filter that can be passed in and applied to the algorithms
 
     public GHRequest() {
         this(5);
@@ -261,6 +264,16 @@ public class GHRequest {
 
     public List<String> getPathDetails() {
         return this.pathDetails;
+    }
+
+    public EdgeFilter getEdgeFilter() { return this.edgeFilter; }
+
+    public GHRequest setEdgeFilter(EdgeFilter edgeFilter) {
+        if (edgeFilter != null) {
+            this.edgeFilter = edgeFilter;
+        }
+
+        return this;
     }
 
     @Override

@@ -17,6 +17,7 @@
  */
 package com.graphhopper.routing;
 
+import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.TraversalMode;
 import com.graphhopper.routing.weighting.Weighting;
 import com.graphhopper.util.PMap;
@@ -40,6 +41,8 @@ public class AlgorithmOptions {
     private Weighting weighting;
     private TraversalMode traversalMode = TraversalMode.NODE_BASED;
     private int maxVisitedNodes = Integer.MAX_VALUE;
+
+    private EdgeFilter edgeFilter;      // Custom edge filters to be applied to the algorithm
 
     private AlgorithmOptions() {
     }
@@ -117,6 +120,12 @@ public class AlgorithmOptions {
     private void assertNotNull(Object optionValue, String optionName) {
         if (optionValue == null)
             throw new NullPointerException("Option '" + optionName + "' must NOT be null");
+    }
+
+    public EdgeFilter getEdgeFilter() { return this.edgeFilter; }
+
+    public void setEdgeFilter(EdgeFilter edgeFilter) {
+        this.edgeFilter = edgeFilter;
     }
 
     @Override

@@ -70,6 +70,13 @@ public class RoutingAlgorithmFactorySimple implements RoutingAlgorithmFactory {
         }
 
         ra.setMaxVisitedNodes(opts.getMaxVisitedNodes());
+
+        // Set custom edge filters on algorithm if present
+        if (ra instanceof AbstractRoutingAlgorithm && opts.getEdgeFilter() != null) {
+            AbstractRoutingAlgorithm ara = (AbstractRoutingAlgorithm) ra;
+            ara.setEdgeFilter(opts.getEdgeFilter());
+        }
+
         return ra;
     }
 
