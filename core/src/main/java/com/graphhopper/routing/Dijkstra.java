@@ -44,7 +44,11 @@ public class Dijkstra extends AbstractRoutingAlgorithm {
     private int to = -1;
 
     public Dijkstra(Graph graph, Weighting weighting, TraversalMode tMode) {
-        super(graph, weighting, tMode);
+        this(graph, weighting, tMode, -1);
+    }
+
+    public Dijkstra(Graph graph, Weighting weighting, TraversalMode tMode, double maxSpeed) {
+        super(graph, weighting, tMode, maxSpeed);
         int size = Math.min(Math.max(200, graph.getNodes() / 10), 2000);
         initCollections(size);
     }
@@ -121,7 +125,7 @@ public class Dijkstra extends AbstractRoutingAlgorithm {
         if (currEdge == null || !finished())
             return createEmptyPath();
 
-        return new Path(graph, weighting).
+        return new Path(graph, weighting, maxSpeed).
                 setWeight(currEdge.weight).setSPTEntry(currEdge).extract();
     }
 

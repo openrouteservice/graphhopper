@@ -47,12 +47,14 @@ public abstract class AbstractRoutingAlgorithm implements RoutingAlgorithm {
     private EdgeFilter additionalEdgeFilter;
     private boolean alreadyRun;
 
+    protected double maxSpeed = -1;       // Maximum speed the traveller can move at
+
     /**
      * @param graph         specifies the graph where this algorithm will run on
      * @param weighting     set the used weight calculation (e.g. fastest, shortest).
      * @param traversalMode how the graph is traversed e.g. if via nodes or edges.
      */
-    public AbstractRoutingAlgorithm(Graph graph, Weighting weighting, TraversalMode traversalMode) {
+    public AbstractRoutingAlgorithm(Graph graph, Weighting weighting, TraversalMode traversalMode, double maxSpeed) {
         this.weighting = weighting;
         this.flagEncoder = weighting.getFlagEncoder();
         this.traversalMode = traversalMode;
@@ -60,6 +62,11 @@ public abstract class AbstractRoutingAlgorithm implements RoutingAlgorithm {
         this.nodeAccess = graph.getNodeAccess();
         outEdgeExplorer = graph.createEdgeExplorer(new DefaultEdgeFilter(flagEncoder, false, true));
         inEdgeExplorer = graph.createEdgeExplorer(new DefaultEdgeFilter(flagEncoder, true, false));
+        this.maxSpeed = maxSpeed;
+    }
+
+    public void setMaxSpeed(double maxSpeed) {
+        this.maxSpeed = maxSpeed;
     }
 
     @Override

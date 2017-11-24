@@ -114,7 +114,7 @@ public class AlternativeRouteTest {
         checkAlternatives(pathInfos);
         assertEquals(2, pathInfos.size());
 
-        DijkstraBidirectionRef dijkstra = new DijkstraBidirectionRef(g, weighting, traversalMode);
+        DijkstraBidirectionRef dijkstra = new DijkstraBidirectionRef(g, weighting, traversalMode, -1);
         Path bestPath = dijkstra.calcPath(5, 4);
 
         Path bestAlt = pathInfos.get(0).getPath();

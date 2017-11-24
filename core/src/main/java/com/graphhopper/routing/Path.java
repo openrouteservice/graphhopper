@@ -68,13 +68,18 @@ public class Path {
     private double weight;
     private NodeAccess nodeAccess;
 
-    public Path(Graph graph, Weighting weighting) {
+    private double maxSpeed = -1;       // Maximum speed that the traveller can move at
+
+    public Path(Graph graph, Weighting weighting) { this(graph, weighting, -1); }
+
+    public Path(Graph graph, Weighting weighting, double maxSpeed) {
         this.weight = Double.MAX_VALUE;
         this.graph = graph;
         this.nodeAccess = graph.getNodeAccess();
         this.weighting = weighting;
         this.encoder = weighting.getFlagEncoder();
         this.edgeIds = new GHIntArrayList();
+        this.maxSpeed = maxSpeed;
     }
 
     /**

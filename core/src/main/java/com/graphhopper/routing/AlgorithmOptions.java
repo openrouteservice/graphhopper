@@ -41,6 +41,8 @@ public class AlgorithmOptions {
     private TraversalMode traversalMode = TraversalMode.NODE_BASED;
     private int maxVisitedNodes = Integer.MAX_VALUE;
 
+    private double maxSpeed = -1;       // The maximum speed the traveller can move at
+
     private AlgorithmOptions() {
     }
 
@@ -53,9 +55,14 @@ public class AlgorithmOptions {
     }
 
     public AlgorithmOptions(String algorithm, Weighting weighting, TraversalMode tMode) {
+        this(algorithm, weighting, tMode, -1);
+    }
+
+    public AlgorithmOptions(String algorithm, Weighting weighting, TraversalMode tMode, double maxSpeed) {
         this.algorithm = algorithm;
         this.weighting = weighting;
         this.traversalMode = tMode;
+        this.maxSpeed = maxSpeed;
     }
 
     /**
@@ -113,6 +120,8 @@ public class AlgorithmOptions {
     public PMap getHints() {
         return hints;
     }
+
+    public double getMaxSpeed() { return maxSpeed; }
 
     private void assertNotNull(Object optionValue, String optionName) {
         if (optionValue == null)

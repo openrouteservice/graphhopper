@@ -23,8 +23,8 @@ import com.graphhopper.routing.weighting.Weighting;
 import com.graphhopper.storage.Graph;
 
 public class DijkstraBidirectionCHNoSOD extends DijkstraBidirectionRef {
-    public DijkstraBidirectionCHNoSOD(Graph graph, Weighting weighting, TraversalMode traversalMode) {
-        super(graph, weighting, traversalMode);
+    public DijkstraBidirectionCHNoSOD(Graph graph, Weighting weighting, TraversalMode traversalMode, double maxSpeed) {
+        super(graph, weighting, traversalMode, maxSpeed);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class DijkstraBidirectionCHNoSOD extends DijkstraBidirectionRef {
 
     @Override
     protected Path createAndInitPath() {
-        bestPath = new Path4CH(graph, graph.getBaseGraph(), weighting);
+        bestPath = new Path4CH(graph, graph.getBaseGraph(), weighting, maxSpeed);
         return bestPath;
     }
 

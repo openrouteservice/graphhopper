@@ -32,8 +32,8 @@ public class PathBidirRef extends Path {
     protected SPTEntry edgeTo;
     private boolean switchFromAndToSPTEntry = false;
 
-    public PathBidirRef(Graph g, Weighting weighting) {
-        super(g, weighting);
+    public PathBidirRef(Graph g, Weighting weighting, double maxSpeed) {
+        super(g, weighting, maxSpeed);
     }
 
     PathBidirRef(PathBidirRef p) {

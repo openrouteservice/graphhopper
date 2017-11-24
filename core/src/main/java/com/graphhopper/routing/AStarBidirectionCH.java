@@ -23,8 +23,8 @@ import com.graphhopper.routing.weighting.Weighting;
 import com.graphhopper.storage.Graph;
 
 public class AStarBidirectionCH extends AStarBidirection {
-    public AStarBidirectionCH(Graph graph, Weighting weighting, TraversalMode traversalMode) {
-        super(graph, weighting, traversalMode);
+    public AStarBidirectionCH(Graph graph, Weighting weighting, TraversalMode traversalMode, double maxSpeed) {
+        super(graph, weighting, traversalMode, maxSpeed);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class AStarBidirectionCH extends AStarBidirection {
 
     @Override
     protected Path createAndInitPath() {
-        bestPath = new Path4CH(graph, graph.getBaseGraph(), weighting);
+        bestPath = new Path4CH(graph, graph.getBaseGraph(), weighting, maxSpeed);
         return bestPath;
     }
 
