@@ -428,10 +428,11 @@ public class QueryGraph implements Graph {
      *
      * @param nodeId         VirtualNode at which edges get unfavored
      * @param favoredHeading north based azimuth of favored heading between 0 and 360
+     * @param favoredHeadingDeviation angle by which the favored heading may deviate
      * @param incoming       if true, incoming edges are unfavored, else outgoing edges
      * @return boolean indicating if enforcement took place
      */
-    public boolean enforceHeading(int nodeId, double favoredHeading, boolean incoming) {
+    public boolean enforceHeading(int nodeId, double favoredHeading, double favoredHeadingDeviation, boolean incoming) {
         if (!isInitialized())
             throw new IllegalStateException("QueryGraph.lookup has to be called in before heading enforcement");
 
@@ -443,6 +444,12 @@ public class QueryGraph implements Graph {
 
         int virtNodeIDintern = nodeId - mainNodes;
         favoredHeading = AC.convertAzimuth2xaxisAngle(favoredHeading);
+
+        if(Double.isNaN((favoredHeadingDeviation))) {
+            favoredHeadingDeviation = 1.74;
+        } else {
+            favoredHeadingDeviation = Math.toRadians(Math.abs(favoredHeadingDeviation));
+        }
 
         // either penalize incoming or outgoing edges
         List<Integer> edgePositions = incoming ? Arrays.asList(VE_BASE, VE_ADJ_REV) : Arrays.asList(VE_BASE_REV, VE_ADJ);
@@ -464,7 +471,7 @@ public class QueryGraph implements Graph {
             edgeOrientation = AC.alignOrientation(favoredHeading, edgeOrientation);
             double delta = (edgeOrientation - favoredHeading);
 
-            if (Math.abs(delta) > 1.74) // penalize if a turn of more than 100°
+            if (Math.abs(delta) > favoredHeadingDeviation) // penalize if a turn of more than 100°
             {
                 edge.setUnfavored(true);
                 unfavoredEdges.add(edge);

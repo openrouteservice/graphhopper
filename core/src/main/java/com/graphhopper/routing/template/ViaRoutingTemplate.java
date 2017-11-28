@@ -92,7 +92,8 @@ public class ViaRoutingTemplate extends AbstractRoutingTemplate implements Routi
         for (int placeIndex = 1; placeIndex < pointCounts; placeIndex++) {
             if (placeIndex == 1) {
                 // enforce start direction
-                queryGraph.enforceHeading(fromQResult.getClosestNode(), ghRequest.getFavoredHeading(0), false);
+                queryGraph.enforceHeading(fromQResult.getClosestNode(), ghRequest.getFavoredHeading(0),
+                        ghRequest.getFavoredHeadingDeviation(0), false);
             } else if (viaTurnPenalty) {
                 // enforce straight start after via stop
                 Path prevRoute = pathList.get(placeIndex - 2);
@@ -105,7 +106,8 @@ public class ViaRoutingTemplate extends AbstractRoutingTemplate implements Routi
             QueryResult toQResult = queryResults.get(placeIndex);
 
             // enforce end direction
-            queryGraph.enforceHeading(toQResult.getClosestNode(), ghRequest.getFavoredHeading(placeIndex), true);
+            queryGraph.enforceHeading(toQResult.getClosestNode(), ghRequest.getFavoredHeading(placeIndex),
+                    ghRequest.getFavoredHeadingDeviation(placeIndex), true);
 
             sw = new StopWatch().start();
             RoutingAlgorithm algo = algoFactory.createAlgo(queryGraph, algoOpts);

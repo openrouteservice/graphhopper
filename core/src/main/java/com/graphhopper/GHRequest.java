@@ -35,14 +35,24 @@ import java.util.Locale;
 public class GHRequest {
     private final List<GHPoint> points;
     private final HintsMap hints = new HintsMap();
-    // List of favored start (1st element) and arrival heading (all other).
+    // List of favored start (1st element) and arrival heading (all other), along with amount of deviation allowed
     // Headings are north based azimuth (clockwise) in (0, 360) or NaN for equal preference
-    private final List<Double> favoredHeadings;
+    private final List<Pair<Double, Double>> favoredHeadings;
     private List<String> pointHints = new ArrayList<>();
     private List<String> pathDetails = new ArrayList<>();
     private String algo = "";
     private boolean possibleToAdd = false;
     private Locale locale = Locale.US;
+
+    public class Pair<A, B> {
+        private final A left;
+        private final B right;
+
+        public Pair(A left, B right) {
+            this.left = left;
+            this.right = right;
+        }
+    }
 
     public GHRequest() {
         this(5);
@@ -50,7 +60,7 @@ public class GHRequest {
 
     public GHRequest(int size) {
         points = new ArrayList<GHPoint>(size);
-        favoredHeadings = new ArrayList<Double>(size);
+        favoredHeadings = new ArrayList<Pair<Double,Double>>(size);
         possibleToAdd = true;
     }
 
@@ -75,7 +85,9 @@ public class GHRequest {
      * Set routing request from specified startPlace to endPlace with a preferred start and end
      * heading. Headings are north based azimuth (clockwise) in (0, 360) or NaN for equal preference
      */
-    public GHRequest(GHPoint startPlace, GHPoint endPlace, double startHeading, double endHeading) {
+    public GHRequest(GHPoint startPlace, GHPoint endPlace,
+                     double startHeading, double startHeadingDeviation,
+                     double endHeading, double endHeadingDeviation) {
         if (startPlace == null)
             throw new IllegalStateException("'from' cannot be null");
 
@@ -86,15 +98,21 @@ public class GHRequest {
         points.add(startPlace);
         points.add(endPlace);
 
-        favoredHeadings = new ArrayList<Double>(2);
+        favoredHeadings = new ArrayList<Pair<Double,Double>>(2);
         validateAzimuthValue(startHeading);
-        favoredHeadings.add(startHeading);
+        favoredHeadings.add(new Pair(startHeading, startHeadingDeviation));
         validateAzimuthValue(endHeading);
-        favoredHeadings.add(endHeading);
+        favoredHeadings.add(new Pair(endHeading, endHeadingDeviation));
+    }
+
+    public GHRequest(GHPoint startPlace, GHPoint endPlace, double startHeading, double endHeading) {
+        this(startPlace, endPlace, startHeading, Double.NaN, endHeading, Double.NaN);
     }
 
     public GHRequest(GHPoint startPlace, GHPoint endPlace) {
-        this(startPlace, endPlace, Double.NaN, Double.NaN);
+        this(startPlace, endPlace,
+                Double.NaN, Double.NaN,
+                Double.NaN, Double.NaN);
     }
 
     /**
@@ -114,7 +132,10 @@ public class GHRequest {
             validateAzimuthValue(heading);
         }
         this.points = points;
-        this.favoredHeadings = favoredHeadings;
+        this.favoredHeadings = new ArrayList<Pair<Double,Double>>(favoredHeadings.size());
+        for(Double heading : favoredHeadings) {
+            this.favoredHeadings.add(new Pair<Double,Double>(heading, Double.NaN));
+        }
     }
 
     /**
@@ -144,7 +165,7 @@ public class GHRequest {
 
         points.add(point);
         validateAzimuthValue(favoredHeading);
-        favoredHeadings.add(favoredHeading);
+        favoredHeadings.add(new Pair<Double,Double>(favoredHeading, Double.NaN));
         return this;
     }
 
@@ -163,8 +184,13 @@ public class GHRequest {
      * @return north based azimuth (clockwise) in (0, 360) or NaN for equal preference
      */
     public double getFavoredHeading(int i) {
-        return favoredHeadings.get(i);
+        return favoredHeadings.get(i).left;
     }
+
+    /**
+     * @return the angle by which favored heading might deviate. Values are (0, 360) or NaN, measured in degrees.
+     */
+    public double getFavoredHeadingDeviation(int i) { return favoredHeadings.get(i).right; }
 
     /**
      * @return if there exist a preferred heading for start/via/end point i
@@ -173,7 +199,7 @@ public class GHRequest {
         if (i >= favoredHeadings.size())
             return false;
 
-        return !Double.isNaN(favoredHeadings.get(i));
+        return !Double.isNaN(favoredHeadings.get(i).left);
     }
 
     private void validateAzimuthValue(double heading) {
