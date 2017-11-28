@@ -17,11 +17,8 @@
  */
 package com.graphhopper.reader;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Base class for all network objects
@@ -144,6 +141,10 @@ public abstract class ReaderElement {
         }
         return false;
     }
+
+    public boolean hasTag(String key) { return properties.containsKey(key); }
+
+    public Iterator<Entry<String, Object>> getProperties() { return properties.entrySet().iterator(); }
 
     /**
      * Returns the first existing tag of the specified list where the order is important.
