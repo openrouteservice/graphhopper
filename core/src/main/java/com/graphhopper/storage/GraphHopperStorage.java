@@ -344,6 +344,13 @@ public final class GraphHopperStorage implements GraphStorage, Graph {
         return baseGraph.getNodes();
     }
 
+    /**
+     * Get the number of edges contained in the grpah storage
+     *
+     * @return
+     */
+    public int getEdges() { return baseGraph.edgeCount; }
+
     @Override
     public NodeAccess getNodeAccess() {
         return baseGraph.getNodeAccess();
