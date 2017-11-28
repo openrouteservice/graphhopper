@@ -90,6 +90,9 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
 
     private ConditionalTagInspector conditionalTagInspector;
 
+    private boolean considerElevation = false;
+    protected EncodedDoubleValue reverseSpeedEncoder;
+
     public AbstractFlagEncoder(PMap properties) {
         throw new RuntimeException("This method must be overridden in derived classes");
     }
@@ -131,6 +134,14 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
 
     public void setRegistered(boolean registered) {
         this.registered = registered;
+    }
+
+    public void setConsiderElevation(boolean considerElevation) {
+        this.considerElevation = considerElevation;
+    }
+
+    public boolean isConsiderElevation() {
+        return considerElevation;
     }
 
     /**
@@ -273,19 +284,39 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
      * mind that this method is performance critical!
      */
     public long reverseFlags(long flags) {
-        long dir = flags & directionBitMask;
-        if (dir == directionBitMask || dir == 0)
-            return flags;
+        if (considerElevation) {
+            long dir = flags & directionBitMask;
+            if (dir == directionBitMask || dir == 0) {
 
-        return flags ^ directionBitMask;
+            } else
+                flags = flags ^ directionBitMask;
+
+            // swap speeds
+            double otherValue = reverseSpeedEncoder.getDoubleValue(flags);
+            flags = setReverseSpeed(flags, speedEncoder.getDoubleValue(flags));
+            return setSpeed(flags, otherValue);
+        } else {
+            long dir = flags & directionBitMask;
+            if (dir == directionBitMask || dir == 0)
+                return flags;
+
+            return flags ^ directionBitMask;
+        }
     }
 
     /**
      * Sets default flags with specified access.
      */
     public long flagsDefault(boolean forward, boolean backward) {
-        long flags = speedEncoder.setDefaultValue(0);
-        return setAccess(flags, forward, backward);
+        if (isConsiderElevation() && backward) {
+            long flags = speedEncoder.setDefaultValue(0);
+            flags = setAccess(flags, forward, backward);
+
+            return reverseSpeedEncoder.setDefaultValue(flags);
+        } else {
+            long flags = speedEncoder.setDefaultValue(0);
+            return setAccess(flags, forward, backward);
+        }
     }
 
     @Override
@@ -309,6 +340,9 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
     }
 
     protected long setLowSpeed(long flags, double speed, boolean reverse) {
+        if (reverse && isConsiderElevation())
+            return setBool(reverseSpeedEncoder.setDoubleValue(flags, 0), K_BACKWARD, false);
+
         return setAccess(speedEncoder.setDoubleValue(flags, 0), false, false);
     }
 
@@ -323,12 +357,29 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
 
     @Override
     public long setReverseSpeed(long flags, double speed) {
+        if (considerElevation) {
+            if (speed < 0 || Double.isNaN(speed))
+                throw new IllegalArgumentException(
+                        "Speed cannot be negative: " + speed + ", flags:" + BitUtil.LITTLE.toBitString(flags));
+
+            if (speed < speedEncoder.factor / 2)
+                return setLowSpeed(flags, speed, true);
+
+            if (speed > getMaxSpeed())
+                speed = getMaxSpeed();
+
+            return reverseSpeedEncoder.setDoubleValue(flags, speed);
+        }
+
         return setSpeed(flags, speed);
     }
 
     @Override
     public double getReverseSpeed(long flags) {
-        return getSpeed(flags);
+        if (considerElevation)
+            return reverseSpeedEncoder.getDoubleValue(flags);
+        else
+            return getSpeed(flags);
     }
 
     @Override
