@@ -129,8 +129,8 @@ class BaseGraph implements Graph {
             }
 
             @Override
-            final long reverseFlags(long edgePointer, long flags) {
-                return encodingManager.reverseFlags(flags);
+            final long reverseFlags(long edgePointer, long flags, int encoderIndex) {
+                return encodingManager.reverseFlags(flags, encoderIndex);
             }
 
             @Override
@@ -440,7 +440,7 @@ class BaseGraph implements Graph {
     EdgeIteratorState copyProperties(CommonEdgeIterator from, EdgeIteratorState to) {
         to.setDistance(from.getDistance()).
                 setName(from.getName()).
-                setFlags(from.getDirectFlags()).
+                setFlags(from.getDirectFlags(-1)).
                 setWayGeometry(from.fetchWayGeometry(0));
 
         if (E_ADDITIONAL >= 0)
@@ -696,9 +696,9 @@ class BaseGraph implements Graph {
             long edgePointer = edgeAccess.toPointer(edgeId);
             int linkA = edgeAccess.getEdgeRef(nodeA, nodeB, edgePointer);
             int linkB = edgeAccess.getEdgeRef(nodeB, nodeA, edgePointer);
-            long flags = edgeAccess.getFlags_(edgePointer, false);
+            long flags = edgeAccess.getFlags_(edgePointer, false, -1);
             edgeAccess.writeEdge(edgeId, updatedA, updatedB, linkA, linkB);
-            edgeAccess.setFlags_(edgePointer, updatedA > updatedB, flags);
+            edgeAccess.setFlags_(edgePointer, updatedA > updatedB, flags, -1);
             if (updatedA < updatedB != nodeA < nodeB)
                 setWayGeometry_(fetchWayGeometry_(edgePointer, true, 0, -1, -1), edgePointer, false);
         }
@@ -1097,9 +1097,9 @@ class BaseGraph implements Graph {
             return this;
         }
 
-        final long getDirectFlags() {
+        final long getDirectFlags(int encoderIndex) {
             if (!freshFlags) {
-                cachedFlags = edgeAccess.getFlags_(edgePointer, reverse);
+                cachedFlags = edgeAccess.getFlags_(edgePointer, reverse, encoderIndex);
                 freshFlags = true;
             }
             return cachedFlags;
@@ -1107,12 +1107,15 @@ class BaseGraph implements Graph {
 
         @Override
         public long getFlags() {
-            return getDirectFlags();
+            return getDirectFlags(-1);
         }
 
         @Override
+        public long getFlags(int encoderIndex) { return getDirectFlags(encoderIndex); }
+
+        @Override
         public final EdgeIteratorState setFlags(long fl) {
-            edgeAccess.setFlags_(edgePointer, reverse, fl);
+            edgeAccess.setFlags_(edgePointer, reverse, fl, -1);
             cachedFlags = fl;
             freshFlags = true;
             return this;
@@ -1139,7 +1142,7 @@ class BaseGraph implements Graph {
          */
         @Override
         public boolean isForward(FlagEncoder encoder) {
-            return encoder.isForward(getDirectFlags());
+            return encoder.isForward(getDirectFlags(encoder.getIndex()));
         }
 
         /**
@@ -1147,7 +1150,7 @@ class BaseGraph implements Graph {
          */
         @Override
         public boolean isBackward(FlagEncoder encoder) {
-            return encoder.isBackward(getDirectFlags());
+            return encoder.isBackward(getDirectFlags(encoder.getIndex()));
         }
 
         @Override

@@ -27,17 +27,20 @@ import com.graphhopper.util.EdgeIteratorState;
 public abstract class AbstractWeighting implements Weighting {
     protected final FlagEncoder flagEncoder;
 
+    protected final int encoderIndex;
+
     protected AbstractWeighting(FlagEncoder encoder) {
         this.flagEncoder = encoder;
         if (!flagEncoder.isRegistered())
             throw new IllegalStateException("Make sure you add the FlagEncoder " + flagEncoder + " to an EncodingManager before using it elsewhere");
         if (!isValidName(getName()))
             throw new IllegalStateException("Not a valid name for a Weighting: " + getName());
+        encoderIndex = encoder.getIndex();
     }
 
     @Override
     public long calcMillis(EdgeIteratorState edgeState, boolean reverse, int prevOrNextEdgeId) {
-        long flags = edgeState.getFlags();
+        long flags = edgeState.getFlags(encoderIndex);
         if (reverse && !flagEncoder.isBackward(flags)
                 || !reverse && !flagEncoder.isForward(flags))
             throw new IllegalStateException("Calculating time should not require to read speed from edge in wrong direction. "

@@ -310,7 +310,10 @@ public class EncodingManager {
     /**
      * Reverse flags, to do so all encoders are called.
      */
-    public long reverseFlags(long flags) {
+    public long reverseFlags(long flags, int encoderIndex) {
+        if(encoderIndex != -1) {
+            return edgeEncoders.get(encoderIndex).reverseFlags(flags);
+        }
         // performance critical
         int len = edgeEncoders.size();
         for (int i = 0; i < len; i++) {

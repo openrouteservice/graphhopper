@@ -67,6 +67,11 @@ public class ShortFastestWeightingTest {
             }
 
             @Override
+            public long getFlags(int encoderIndex) {
+                return flags;
+            }
+
+            @Override
             public boolean getBool(int key, boolean _default) {
                 return _default;
             }

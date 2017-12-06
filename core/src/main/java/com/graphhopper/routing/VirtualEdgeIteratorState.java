@@ -119,6 +119,8 @@ public class VirtualEdgeIteratorState implements EdgeIteratorState, CHEdgeIterat
         return flags;
     }
 
+    public long getFlags(int encoderIndex) { return flags; }
+
     @Override
     public EdgeIteratorState setFlags(long flags) {
         this.flags = flags;

@@ -303,6 +303,9 @@ public class GHUtility {
             }
 
             @Override
+            public long getFlags(int encoderIndex) { return flags; }
+
+            @Override
             public boolean getBool(int key, boolean _default) {
                 return _default;
             }
@@ -407,6 +410,8 @@ public class GHUtility {
             throw new UnsupportedOperationException("Not supported. Edge is empty.");
         }
 
+        @Override
+        public long getFlags(int encoderIndex) { throw new UnsupportedOperationException("Not supported. Edge is empty."); }
         @Override
         public PointList fetchWayGeometry(int type) {
             throw new UnsupportedOperationException("Not supported. Edge is empty.");

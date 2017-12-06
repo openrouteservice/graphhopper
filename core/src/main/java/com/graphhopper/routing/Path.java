@@ -68,6 +68,8 @@ public class Path {
     private double weight;
     private NodeAccess nodeAccess;
 
+    private int encoderIndex = -1;
+
     public Path(Graph graph, Weighting weighting) {
         this.weight = Double.MAX_VALUE;
         this.graph = graph;
@@ -75,6 +77,7 @@ public class Path {
         this.weighting = weighting;
         this.encoder = weighting.getFlagEncoder();
         this.edgeIds = new GHIntArrayList();
+        this.encoderIndex = this.encoder.getIndex();
     }
 
     /**

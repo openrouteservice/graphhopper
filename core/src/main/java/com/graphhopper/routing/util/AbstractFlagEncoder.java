@@ -83,6 +83,8 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
     private boolean blockFords = true;
     private boolean registered;
 
+    private int mgrIndex = -1;
+
     // Speeds from CarFlagEncoder
     protected static final double UNKNOWN_DURATION_FERRY_SPEED = 5;
     protected static final double SHORT_TRIP_FERRY_SPEED = 20;
@@ -116,6 +118,14 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
 
         ferries.add("shuttle_train");
         ferries.add("ferry");
+    }
+
+    public void setIndex(int index) {
+        this.mgrIndex = index;
+    }
+
+    public int getIndex() {
+        return mgrIndex;
     }
 
     // should be called as last method in constructor, move out of the flag encoder somehow

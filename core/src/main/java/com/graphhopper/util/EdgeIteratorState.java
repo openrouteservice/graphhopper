@@ -83,6 +83,8 @@ public interface EdgeIteratorState {
 
     long getFlags();
 
+    long getFlags(int encoderIndex);
+
     EdgeIteratorState setFlags(long flags);
 
     /**
