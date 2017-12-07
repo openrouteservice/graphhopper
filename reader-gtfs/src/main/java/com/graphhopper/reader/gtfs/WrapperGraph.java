@@ -138,6 +138,9 @@ public class WrapperGraph implements Graph {
             }
 
             @Override
+            public long getFlags(int encoderIndex) { throw new UnsupportedOperationException(); }
+
+            @Override
             public EdgeIteratorState setFlags(long flags) {
                 throw new UnsupportedOperationException();
             }

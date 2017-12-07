@@ -145,6 +145,9 @@ class GraphSupport {
                     }
 
                     @Override
+                    public long getFlags(int encoderIndex) { return edge.getFlags(); }
+
+                    @Override
                     public EdgeIteratorState setFlags(long flags) {
                         edge.setFlags(flags);
                         return this;
