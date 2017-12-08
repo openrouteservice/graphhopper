@@ -1,4 +1,4 @@
-package com.graphhopper.util;
+package com.graphhopper.routing.util;
 
 public class RouteSplit {
     public int Start;

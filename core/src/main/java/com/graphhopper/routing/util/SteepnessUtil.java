@@ -2,7 +2,6 @@ package com.graphhopper.routing.util;
 
 import com.graphhopper.util.DistanceCalc;
 import com.graphhopper.util.PointList;
-import com.graphhopper.util.RouteSplit;
 
 import java.util.List;
 
