@@ -18,6 +18,7 @@
 package com.graphhopper;
 
 import com.graphhopper.routing.util.HintsMap;
+import com.graphhopper.routing.util.PathProcessor;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.shapes.GHPoint;
 
@@ -43,6 +44,8 @@ public class GHRequest {
     private String algo = "";
     private boolean possibleToAdd = false;
     private Locale locale = Locale.US;
+
+    private PathProcessor pathProcessor;
 
     public GHRequest() {
         this(5);
@@ -262,6 +265,10 @@ public class GHRequest {
     public List<String> getPathDetails() {
         return this.pathDetails;
     }
+
+    public PathProcessor getPathProcessor() { return this.pathProcessor; }
+
+    public void setPathProcessor(PathProcessor pathProcessor) { this.pathProcessor = pathProcessor; }
 
     @Override
     public String toString() {

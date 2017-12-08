@@ -19,6 +19,8 @@ package com.graphhopper.util;
 
 import com.graphhopper.PathWrapper;
 import com.graphhopper.routing.Path;
+import com.graphhopper.routing.PathProcessingContext;
+import com.graphhopper.routing.util.PathProcessor;
 import com.graphhopper.util.details.PathDetail;
 import com.graphhopper.util.details.PathDetailsBuilderFactory;
 import com.graphhopper.util.exceptions.ConnectionNotFoundException;
@@ -75,12 +77,17 @@ public class PathMerger {
         return this;
     }
 
-    public void doWork(PathWrapper altRsp, List<Path> paths, Translation tr) {
+    public void doWork(PathWrapper altRsp, List<Path> paths, Translation tr, PathProcessingContext procCntx) {
         int origPoints = 0;
         long fullTimeInMillis = 0;
         double fullWeight = 0;
         double fullDistance = 0;
         boolean allFound = true;
+
+        PathProcessor pathProcessor = procCntx.getPathProcessor();
+        if(pathProcessor != null) {
+            pathProcessor.init(procCntx);
+        }
 
         InstructionList fullInstructions = new InstructionList(tr);
         PointList fullPoints = PointList.EMPTY;
@@ -126,6 +133,10 @@ public class PathMerger {
             }
 
             allFound = allFound && path.isFound();
+        }
+
+        if(pathProcessor != null) {
+            pathProcessor.finish();
         }
 
         if (!fullPoints.isEmpty()) {

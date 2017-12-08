@@ -21,4 +21,6 @@ public class PathProcessingContext {
     public PathProcessingContext(PathProcessor pathProcessor) {
         this.pathProcessor = pathProcessor;
     }
+
+    public PathProcessor getPathProcessor() { return pathProcessor; }
 }

@@ -9,7 +9,7 @@ import com.graphhopper.util.PointList;
  * steepness).
  * The class is predominantly used inbetween the returning of a route from graphhopper and providing the results to the
  * user and utilises the extended storages which contain custom graphs.
- * The path processor object itself is passed through a PathProcessingContext object
+ * Serves as an abstract class for all path processing objects
  */
 public abstract class PathProcessor {
     public abstract void init(PathProcessingContext cntx);
