@@ -18,10 +18,7 @@
 package com.graphhopper.routing;
 
 import com.graphhopper.routing.util.FlagEncoder;
-import com.graphhopper.util.CHEdgeIteratorState;
-import com.graphhopper.util.EdgeIterator;
-import com.graphhopper.util.EdgeIteratorState;
-import com.graphhopper.util.PointList;
+import com.graphhopper.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +79,11 @@ class VirtualEdgeIterator implements EdgeIterator, CHEdgeIteratorState {
     @Override
     public PointList fetchWayGeometry(int mode) {
         return edges.get(current).fetchWayGeometry(mode);
+    }
+
+    @Override
+    public PointList fetchWayGeometry(int mode, ByteArrayBuffer buffer) {
+        return edges.get(current).fetchWayGeometry(mode, buffer);
     }
 
     @Override

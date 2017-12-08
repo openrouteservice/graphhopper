@@ -20,6 +20,7 @@ package com.graphhopper.routing.util;
 import com.graphhopper.reader.ReaderRelation;
 import com.graphhopper.reader.ReaderWay;
 import com.graphhopper.routing.weighting.PriorityWeighting;
+import com.graphhopper.util.ByteArrayBuffer;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.InstructionAnnotation;
 import com.graphhopper.util.Translation;
@@ -63,6 +64,8 @@ abstract public class BikeCommonFlagEncoder extends AbstractFlagEncoder {
 
     // This is the specific bicycle class
     private String classBicycleKey;
+
+    private ByteArrayBuffer arrayBuffer = new ByteArrayBuffer(100);
 
     protected BikeCommonFlagEncoder(int speedBits, double speedFactor, int maxTurnCosts) {
         super(speedBits, speedFactor, maxTurnCosts);
@@ -595,6 +598,8 @@ abstract public class BikeCommonFlagEncoder extends AbstractFlagEncoder {
                 weightToPrioMap.put(110d, weightToPrioMap.lastEntry().getValue() + 1);
         }
     }
+
+    // TODO: In the applyWayTags enhancement, the PointList pl = edge.fetchWayGeometry(3, arrayBuffer); needs to be updated for the arrayBuffer
 
     /**
      * Handle surface and wayType encoding

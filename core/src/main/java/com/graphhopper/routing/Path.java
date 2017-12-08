@@ -327,7 +327,9 @@ public class Path {
      *
      * @return this path its geometry
      */
-    public PointList calcPoints() {
+    public PointList calcPoints() { return calcPoints(null); }
+
+    public PointList calcPoints(final ByteArrayBuffer byteBuffer) {
         final PointList points = new PointList(edgeIds.size() + 1, nodeAccess.is3D());
         if (edgeIds.isEmpty()) {
             if (isFound()) {
@@ -341,7 +343,7 @@ public class Path {
         forEveryEdge(new EdgeVisitor() {
             @Override
             public void next(EdgeIteratorState eb, int index, int prevEdgeId) {
-                PointList pl = eb.fetchWayGeometry(2);
+                PointList pl = eb.fetchWayGeometry(2, byteBuffer);
                 for (int j = 0; j < pl.getSize(); j++) {
                     points.add(pl, j);
                 }

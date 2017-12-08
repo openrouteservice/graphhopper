@@ -27,6 +27,7 @@ import com.graphhopper.routing.RoutingAlgorithmFactory;
 import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.storage.index.QueryResult;
+import com.graphhopper.util.ByteArrayBuffer;
 import com.graphhopper.util.Parameters.Routing;
 import com.graphhopper.util.PathMerger;
 import com.graphhopper.util.PointList;
@@ -50,11 +51,11 @@ final public class AlternativeRoutingTemplate extends ViaRoutingTemplate {
     }
 
     @Override
-    public List<QueryResult> lookup(List<GHPoint> points, FlagEncoder encoder) {
+    public List<QueryResult> lookup(List<GHPoint> points, FlagEncoder encoder, ByteArrayBuffer byteBuffer) {
         if (points.size() > 2)
             throw new IllegalArgumentException("Currently alternative routes work only with start and end point. You tried to use: " + points.size() + " points");
 
-        return super.lookup(points, encoder);
+        return super.lookup(points, encoder, byteBuffer);
     }
 
     @Override

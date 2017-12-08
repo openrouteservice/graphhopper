@@ -583,6 +583,7 @@ class BaseGraph implements Graph {
      * edge.
      */
     void inPlaceNodeRemove(int removeNodeCount) {
+        //ByteArrayBuffer byteBuffer = new ByteArrayBuffer(200);
         // Prepare edge-update of nodes which are connected to deleted nodes
         int toMoveNodes = getNodes();
         int itemsToMove = 0;
@@ -700,7 +701,7 @@ class BaseGraph implements Graph {
             edgeAccess.writeEdge(edgeId, updatedA, updatedB, linkA, linkB);
             edgeAccess.setFlags_(edgePointer, updatedA > updatedB, flags);
             if (updatedA < updatedB != nodeA < nodeB)
-                setWayGeometry_(fetchWayGeometry_(edgePointer, true, 0, -1, -1), edgePointer, false);
+                setWayGeometry_(fetchWayGeometry_(edgePointer, true, 0, -1, -1, null), edgePointer, false);
         }
 
         if (removeNodeCount >= nodeCount)
@@ -819,7 +820,8 @@ class BaseGraph implements Graph {
         return bytes;
     }
 
-    private PointList fetchWayGeometry_(long edgePointer, boolean reverse, int mode, int baseNode, int adjNode) {
+    private PointList fetchWayGeometry_(long edgePointer, boolean reverse, int mode, int baseNode, int adjNode,
+                                        ByteArrayBuffer buffer) {
         long geoRef = Helper.toUnsignedLong(edges.getInt(edgePointer + E_GEO));
         int count = 0;
         byte[] bytes = null;
@@ -828,8 +830,20 @@ class BaseGraph implements Graph {
             count = wayGeometry.getInt(geoRef);
 
             geoRef += 4L;
-            bytes = new byte[count * nodeAccess.getDimension() * 4];
+
+            int arraySize = count * nodeAccess.getDimension() * 4;
+
+            if(buffer == null) {
+                // We have not been passed a buffer to store info in
+                bytes = new byte[arraySize];
+            } else {
+                // Use the buffer passed as a storage
+                buffer.ensureCapacity(arraySize);
+                bytes = buffer.array();
+            }
+
             wayGeometry.getBytes(geoRef, bytes, bytes.length);
+
         } else if (mode == 0)
             return PointList.EMPTY;
 
@@ -1158,7 +1172,12 @@ class BaseGraph implements Graph {
 
         @Override
         public PointList fetchWayGeometry(int mode) {
-            return baseGraph.fetchWayGeometry_(edgePointer, reverse, mode, getBaseNode(), getAdjNode());
+            return baseGraph.fetchWayGeometry_(edgePointer, reverse, mode, getBaseNode(), getAdjNode(), null);
+        }
+
+        @Override
+        public PointList fetchWayGeometry(int mode, ByteArrayBuffer buffer) {
+            return baseGraph.fetchWayGeometry_(edgePointer, reverse, mode, getBaseNode(), getAdjNode(), buffer);
         }
 
         @Override

@@ -17,6 +17,7 @@
  */
 package com.graphhopper.storage.index;
 
+import com.graphhopper.util.ByteArrayBuffer;
 import com.graphhopper.util.DistanceCalc;
 import com.graphhopper.util.EdgeIteratorState;
 import com.graphhopper.util.PointList;
@@ -132,16 +133,17 @@ public class QueryResult {
         return snappedPoint;
     }
 
+    public void calcSnappedPoint(DistanceCalc distCalc) { calcSnappedPoint(distCalc, null); }
     /**
      * Calculates the closet point on the edge from the query point.
      */
-    public void calcSnappedPoint(DistanceCalc distCalc) {
+    public void calcSnappedPoint(DistanceCalc distCalc, ByteArrayBuffer byteBuffer) {
         if (closestEdge == null)
             throw new IllegalStateException("No closest edge?");
         if (snappedPoint != null)
             throw new IllegalStateException("Calculate snapped point only once");
 
-        PointList fullPL = getClosestEdge().fetchWayGeometry(3);
+        PointList fullPL = getClosestEdge().fetchWayGeometry(3, byteBuffer);
         double tmpLat = fullPL.getLatitude(wayIndex);
         double tmpLon = fullPL.getLongitude(wayIndex);
         double tmpEle = fullPL.getElevation(wayIndex);

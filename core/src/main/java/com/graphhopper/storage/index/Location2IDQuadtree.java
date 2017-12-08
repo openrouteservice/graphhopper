@@ -24,10 +24,7 @@ import com.graphhopper.geohash.KeyAlgo;
 import com.graphhopper.geohash.LinearKeyAlgo;
 import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.storage.*;
-import com.graphhopper.util.BreadthFirstSearch;
-import com.graphhopper.util.DistanceCalc;
-import com.graphhopper.util.Helper;
-import com.graphhopper.util.StopWatch;
+import com.graphhopper.util.*;
 import com.graphhopper.util.shapes.BBox;
 import com.graphhopper.util.shapes.GHPoint;
 import org.slf4j.Logger;
@@ -279,6 +276,12 @@ class Location2IDQuadtree implements LocationIndex {
     @Override
     public QueryResult findClosest(final double queryLat, final double queryLon,
                                    final EdgeFilter edgeFilter) {
+        return findClosest(queryLat, queryLon, edgeFilter, null);
+    }
+
+    @Override
+    public QueryResult findClosest(final double queryLat, final double queryLon,
+                                   final EdgeFilter edgeFilter, ByteArrayBuffer buffer) {
         if (isClosed())
             throw new IllegalStateException("You need to create a new LocationIndex instance as it is already closed");
 

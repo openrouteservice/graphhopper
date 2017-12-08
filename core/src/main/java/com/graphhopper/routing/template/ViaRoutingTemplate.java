@@ -24,11 +24,8 @@ import com.graphhopper.routing.*;
 import com.graphhopper.routing.util.*;
 import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.storage.index.QueryResult;
-import com.graphhopper.util.EdgeIteratorState;
+import com.graphhopper.util.*;
 import com.graphhopper.util.Parameters.Routing;
-import com.graphhopper.util.PathMerger;
-import com.graphhopper.util.StopWatch;
-import com.graphhopper.util.Translation;
 import com.graphhopper.util.exceptions.PointNotFoundException;
 import com.graphhopper.util.shapes.GHPoint;
 
@@ -55,7 +52,7 @@ public class ViaRoutingTemplate extends AbstractRoutingTemplate implements Routi
     }
 
     @Override
-    public List<QueryResult> lookup(List<GHPoint> points, FlagEncoder encoder) {
+    public List<QueryResult> lookup(List<GHPoint> points, FlagEncoder encoder, ByteArrayBuffer byteBuffer) {
         if (points.size() < 2)
             throw new IllegalArgumentException("At least 2 points have to be specified, but was:" + points.size());
 
@@ -67,10 +64,10 @@ public class ViaRoutingTemplate extends AbstractRoutingTemplate implements Routi
             if (ghRequest.hasPointHints()) {
                 res = locationIndex.findClosest(point.lat, point.lon, new NameSimilarityEdgeFilter(edgeFilter, ghRequest.getPointHints().get(placeIndex)));
                 if (!res.isValid()) {
-                    res = locationIndex.findClosest(point.lat, point.lon, edgeFilter);
+                    res = locationIndex.findClosest(point.lat, point.lon, edgeFilter, byteBuffer);
                 }
             } else {
-                res = locationIndex.findClosest(point.lat, point.lon, edgeFilter);
+                res = locationIndex.findClosest(point.lat, point.lon, edgeFilter, byteBuffer);
             }
             if (!res.isValid())
                 ghResponse.addError(new PointNotFoundException("Cannot find point " + placeIndex + ": " + point, placeIndex));

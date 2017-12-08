@@ -517,6 +517,12 @@ public class LocationIndexTree implements LocationIndex {
 
     @Override
     public QueryResult findClosest(final double queryLat, final double queryLon, final EdgeFilter edgeFilter) {
+        return findClosest(queryLat, queryLon, edgeFilter, null);
+    }
+
+    @Override
+    public QueryResult findClosest(final double queryLat, final double queryLon, final EdgeFilter edgeFilter,
+                                   final ByteArrayBuffer buffer) {
         if (isClosed())
             throw new IllegalStateException("You need to create a new LocationIndex instance as it is already closed");
 
@@ -535,7 +541,7 @@ public class LocationIndexTree implements LocationIndex {
             storedNetworkEntryIds.forEach(new IntPredicate() {
                 @Override
                 public boolean apply(int networkEntryNodeId) {
-                    new XFirstSearchCheck(queryLat, queryLon, checkBitset, edgeFilter) {
+                    new XFirstSearchCheck(queryLat, queryLon, checkBitset, edgeFilter, buffer) {
                         @Override
                         protected double getQueryDistance() {
                             return closestMatch.getQueryDistance();
@@ -566,7 +572,7 @@ public class LocationIndexTree implements LocationIndex {
         // denormalize distance and calculate snapping point only if closed match was found
         if (closestMatch.isValid()) {
             closestMatch.setQueryDistance(distCalc.calcDenormalizedDist(closestMatch.getQueryDistance()));
-            closestMatch.calcSnappedPoint(distCalc);
+            closestMatch.calcSnappedPoint(distCalc, buffer);
         }
 
         return closestMatch;
@@ -593,6 +599,7 @@ public class LocationIndexTree implements LocationIndex {
         // implement a cheap priority queue via List, sublist and Collections.sort
         final List<QueryResult> queryResults = new ArrayList<QueryResult>();
         GHIntHashSet set = new GHIntHashSet();
+        final ByteArrayBuffer buffer = new ByteArrayBuffer(16);
 
         // Doing 2 iterations means searching 9 tiles.
         for (int iteration = 0; iteration < 2; iteration++) {
@@ -606,7 +613,7 @@ public class LocationIndexTree implements LocationIndex {
 
                 @Override
                 public boolean apply(int node) {
-                    new XFirstSearchCheck(queryLat, queryLon, exploredNodes, edgeFilter) {
+                    new XFirstSearchCheck(queryLat, queryLon, exploredNodes, edgeFilter, buffer) {
                         @Override
                         protected double getQueryDistance() {
                             // do not skip search if distance is 0 or near zero (equalNormedDelta)
@@ -676,7 +683,7 @@ public class LocationIndexTree implements LocationIndex {
             if (qr.isValid()) {
                 // denormalize distance
                 qr.setQueryDistance(distCalc.calcDenormalizedDist(qr.getQueryDistance()));
-                qr.calcSnappedPoint(distCalc);
+                qr.calcSnappedPoint(distCalc, buffer);
             } else {
                 throw new IllegalStateException("Invalid QueryResult should not happen here: " + qr);
             }
@@ -788,6 +795,7 @@ public class LocationIndexTree implements LocationIndex {
         void prepare() {
             final EdgeIterator allIter = graph.getAllEdges();
             try {
+                ByteArrayBuffer buffer = new ByteArrayBuffer();
                 while (allIter.next()) {
                     int nodeA = allIter.getBaseNode();
                     int nodeB = allIter.getAdjNode();
@@ -795,7 +803,7 @@ public class LocationIndexTree implements LocationIndex {
                     double lon1 = nodeAccess.getLongitude(nodeA);
                     double lat2;
                     double lon2;
-                    PointList points = allIter.fetchWayGeometry(0);
+                    PointList points = allIter.fetchWayGeometry(0, buffer);
                     int len = points.getSize();
                     for (int i = 0; i < len; i++) {
                         lat2 = points.getLatitude(i);
@@ -961,12 +969,15 @@ public class LocationIndexTree implements LocationIndex {
         double currLat;
         double currLon;
         int currNode;
+        final ByteArrayBuffer arrayBuffer;
 
-        public XFirstSearchCheck(double queryLat, double queryLon, GHBitSet checkBitset, EdgeFilter edgeFilter) {
+        public XFirstSearchCheck(double queryLat, double queryLon, GHBitSet checkBitset, EdgeFilter edgeFilter,
+                                 ByteArrayBuffer arrayBuffer) {
             this.queryLat = queryLat;
             this.queryLon = queryLon;
             this.checkBitset = checkBitset;
             this.edgeFilter = edgeFilter;
+            this.arrayBuffer = arrayBuffer;
         }
 
         @Override
@@ -1009,7 +1020,7 @@ public class LocationIndexTree implements LocationIndex {
             double tmpLat = currLat;
             double tmpLon = currLon;
             double tmpNormedDist;
-            PointList pointList = currEdge.fetchWayGeometry(2);
+            PointList pointList = currEdge.fetchWayGeometry(2, arrayBuffer);
             int len = pointList.getSize();
             for (int pointIndex = 0; pointIndex < len; pointIndex++) {
                 double wayLat = pointList.getLatitude(pointIndex);

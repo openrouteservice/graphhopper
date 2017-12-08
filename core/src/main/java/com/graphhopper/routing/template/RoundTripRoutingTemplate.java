@@ -29,12 +29,9 @@ import com.graphhopper.routing.util.tour.TourStrategy;
 import com.graphhopper.routing.weighting.AvoidEdgesWeighting;
 import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.storage.index.QueryResult;
-import com.graphhopper.util.Helper;
-import com.graphhopper.util.Parameters;
+import com.graphhopper.util.*;
 import com.graphhopper.util.Parameters.Algorithms;
 import com.graphhopper.util.Parameters.Algorithms.RoundTrip;
-import com.graphhopper.util.PathMerger;
-import com.graphhopper.util.Translation;
 import com.graphhopper.util.exceptions.PointNotFoundException;
 import com.graphhopper.util.shapes.GHPoint;
 
@@ -66,7 +63,7 @@ public class RoundTripRoutingTemplate extends AbstractRoutingTemplate implements
     }
 
     @Override
-    public List<QueryResult> lookup(List<GHPoint> points, FlagEncoder encoder) {
+    public List<QueryResult> lookup(List<GHPoint> points, FlagEncoder encoder, ByteArrayBuffer byteBuffer) {
         if (points.size() != 1 || ghRequest.getPoints().size() != 1)
             throw new IllegalArgumentException("For round trip calculation exactly one point is required");
         final double distanceInMeter = ghRequest.getHints().getDouble(RoundTrip.DISTANCE, 10000);
@@ -78,7 +75,7 @@ public class RoundTripRoutingTemplate extends AbstractRoutingTemplate implements
         TourStrategy strategy = new MultiPointTour(new Random(seed), distanceInMeter, roundTripPointCount, initialHeading);
         queryResults = new ArrayList<>(2 + strategy.getNumberOfGeneratedPoints());
         EdgeFilter edgeFilter = new DefaultEdgeFilter(encoder);
-        QueryResult startQR = locationIndex.findClosest(start.lat, start.lon, edgeFilter);
+        QueryResult startQR = locationIndex.findClosest(start.lat, start.lon, edgeFilter, byteBuffer);
         if (!startQR.isValid())
             throw new PointNotFoundException("Cannot find point 0: " + start, 0);
 

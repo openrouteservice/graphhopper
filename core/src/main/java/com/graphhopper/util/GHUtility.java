@@ -413,6 +413,11 @@ public class GHUtility {
         }
 
         @Override
+        public PointList fetchWayGeometry(int type, ByteArrayBuffer buffer) {
+            throw new UnsupportedOperationException("Not supported. Edge is empty.");
+        }
+
+        @Override
         public EdgeIteratorState setWayGeometry(PointList list) {
             throw new UnsupportedOperationException("Not supported. Edge is empty.");
         }

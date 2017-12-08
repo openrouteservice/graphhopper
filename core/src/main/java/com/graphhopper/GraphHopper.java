@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -943,6 +944,12 @@ public class GraphHopper implements GraphHopperAPI {
         return weighting;
     }
 
+    public GHResponse route(GHRequest request, ByteArrayBuffer byteBuffer) {
+        GHResponse response = new GHResponse();
+        calcPaths(request, response, byteBuffer);
+        return response;
+    }
+
     @Override
     public GHResponse route(GHRequest request) {
         GHResponse response = new GHResponse();
@@ -950,10 +957,11 @@ public class GraphHopper implements GraphHopperAPI {
         return response;
     }
 
+    public List<Path> calcPaths(GHRequest request, GHResponse ghResp) { return calcPaths(request, ghResp, null); }
     /**
      * This method calculates the alternative path list using the low level Path objects.
      */
-    public List<Path> calcPaths(GHRequest request, GHResponse ghRsp) {
+    public List<Path> calcPaths(GHRequest request, GHResponse ghRsp, ByteArrayBuffer byteBuffer) {
         if (ghStorage == null || !fullyLoaded)
             throw new IllegalStateException("Do a successful call to load or importOrLoad before routing");
 
@@ -1013,7 +1021,7 @@ public class GraphHopper implements GraphHopperAPI {
             Translation tr = trMap.getWithFallBack(locale);
             for (int i = 0; i < maxRetries; i++) {
                 StopWatch sw = new StopWatch().start();
-                List<QueryResult> qResults = routingTemplate.lookup(points, encoder);
+                List<QueryResult> qResults = routingTemplate.lookup(points, encoder, byteBuffer);
                 ghRsp.addDebugInfo("idLookup:" + sw.stop().getSeconds() + "s");
                 if (ghRsp.hasErrors())
                     return Collections.emptyList();
@@ -1039,11 +1047,11 @@ public class GraphHopper implements GraphHopperAPI {
 
                     tMode = getCHFactoryDecorator().getNodeBase();
                     queryGraph = new QueryGraph(ghStorage.getGraph(CHGraph.class, weighting));
-                    queryGraph.lookup(qResults);
+                    queryGraph.lookup(qResults, byteBuffer);
                 } else {
                     checkNonChMaxWaypointDistance(points);
                     queryGraph = new QueryGraph(ghStorage);
-                    queryGraph.lookup(qResults);
+                    queryGraph.lookup(qResults, byteBuffer);
                     weighting = createWeighting(hints, encoder, queryGraph);
                     ghRsp.addDebugInfo("tmode:" + tMode.toString());
                 }

@@ -68,6 +68,8 @@ public interface EdgeIteratorState {
      */
     PointList fetchWayGeometry(int mode);
 
+    PointList fetchWayGeometry(int mode, ByteArrayBuffer buffer);
+
     /**
      * @param list is a sorted collection of nodes between the baseNode and the current adjacent
      *             node. Specify the list without the adjacent and base nodes.

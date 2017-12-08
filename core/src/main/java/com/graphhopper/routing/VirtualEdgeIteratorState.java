@@ -18,10 +18,7 @@
 package com.graphhopper.routing;
 
 import com.graphhopper.routing.util.FlagEncoder;
-import com.graphhopper.util.CHEdgeIteratorState;
-import com.graphhopper.util.EdgeIteratorState;
-import com.graphhopper.util.GHUtility;
-import com.graphhopper.util.PointList;
+import com.graphhopper.util.*;
 
 /**
  * Creates an edge state decoupled from a graph where nodes, pointList, etc are kept in memory.
@@ -78,6 +75,9 @@ public class VirtualEdgeIteratorState implements EdgeIteratorState, CHEdgeIterat
     public int getAdjNode() {
         return adjNode;
     }
+
+    @Override
+    public PointList fetchWayGeometry(int mode, ByteArrayBuffer buffer) { return fetchWayGeometry(mode); }
 
     @Override
     public PointList fetchWayGeometry(int mode) {

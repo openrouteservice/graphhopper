@@ -190,12 +190,18 @@ public class QueryGraph implements Graph {
      * @see #lookup(List)
      */
     public QueryGraph lookup(QueryResult fromRes, QueryResult toRes) {
+        return lookup(fromRes, toRes, null);
+    }
+
+    public QueryGraph lookup(QueryResult fromRes, QueryResult toRes, final ByteArrayBuffer byteBuffer) {
         List<QueryResult> results = new ArrayList<QueryResult>(2);
         results.add(fromRes);
         results.add(toRes);
-        lookup(results);
+        lookup(results, byteBuffer);
         return this;
     }
+
+    public void lookup(List<QueryResult> resList) { lookup(resList, null); }
 
     /**
      * For all specified query results calculate snapped point and if necessary set closest node
@@ -204,7 +210,7 @@ public class QueryGraph implements Graph {
      *
      * @see QueryGraph
      */
-    public void lookup(List<QueryResult> resList) {
+    public void lookup(List<QueryResult> resList, final ByteArrayBuffer byteBuffer) {
         if (isInitialized())
             throw new IllegalStateException("Call lookup only once. Otherwise you'll have problems for queries sharing the same edge.");
 
@@ -236,14 +242,14 @@ public class QueryGraph implements Graph {
             boolean doReverse = base > closestEdge.getAdjNode();
             if (base == closestEdge.getAdjNode()) {
                 // check for special case #162 where adj == base and force direction via latitude comparison
-                PointList pl = closestEdge.fetchWayGeometry(0);
+                PointList pl = closestEdge.fetchWayGeometry(0, byteBuffer);
                 if (pl.size() > 1)
                     doReverse = pl.getLatitude(0) > pl.getLatitude(pl.size() - 1);
             }
 
             if (doReverse) {
                 closestEdge = closestEdge.detach(true);
-                PointList fullPL = closestEdge.fetchWayGeometry(3);
+                PointList fullPL = closestEdge.fetchWayGeometry(3, byteBuffer);
                 res.setClosestEdge(closestEdge);
                 if (res.getSnappedPosition() == QueryResult.Position.PILLAR)
                     // ON pillar node
@@ -274,7 +280,7 @@ public class QueryGraph implements Graph {
             public boolean apply(int edgeId, List<QueryResult> results) {
                 // we can expect at least one entry in the results
                 EdgeIteratorState closestEdge = results.get(0).getClosestEdge();
-                final PointList fullPL = closestEdge.fetchWayGeometry(3);
+                final PointList fullPL = closestEdge.fetchWayGeometry(3, byteBuffer);
                 int baseNode = closestEdge.getBaseNode();
                 // sort results on the same edge by the wayIndex and if equal by distance to pillar node
                 Collections.sort(results, new Comparator<QueryResult>() {
@@ -431,7 +437,9 @@ public class QueryGraph implements Graph {
      * @param incoming       if true, incoming edges are unfavored, else outgoing edges
      * @return boolean indicating if enforcement took place
      */
-    public boolean enforceHeading(int nodeId, double favoredHeading, boolean incoming) {
+    public boolean enforceHeading(int nodeId, double favoredHeading, boolean incoming) { return enforceHeading(nodeId, favoredHeading, incoming, null); }
+
+    public boolean enforceHeading(int nodeId, double favoredHeading, boolean incoming, ByteArrayBuffer byteBuffer) {
         if (!isInitialized())
             throw new IllegalStateException("QueryGraph.lookup has to be called in before heading enforcement");
 
@@ -450,7 +458,7 @@ public class QueryGraph implements Graph {
         for (int edgePos : edgePositions) {
             VirtualEdgeIteratorState edge = virtualEdges.get(virtNodeIDintern * 4 + edgePos);
 
-            PointList wayGeo = edge.fetchWayGeometry(3);
+            PointList wayGeo = edge.fetchWayGeometry(3, byteBuffer);
             double edgeOrientation;
             if (incoming) {
                 int numWayPoints = wayGeo.getSize();
