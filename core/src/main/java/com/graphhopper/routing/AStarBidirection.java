@@ -246,6 +246,7 @@ public class AStarBidirection extends AbstractBidirAlgo implements Recalculation
                 double estimationFullWeight = alreadyVisitedWeight + currWeightToGoal;
                 if (ase == null) {
                     ase = new AStarEntry(iter.getEdge(), neighborNode, estimationFullWeight, alreadyVisitedWeight);
+                    ase.originalEdge = iter.getOriginalEdge();
                     bestWeightMap.put(traversalId, ase);
                 } else {
 //                    assert (ase.weight > 0.999999 * estimationFullWeight) : "Inconsistent distance estimate "

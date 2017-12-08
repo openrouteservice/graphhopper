@@ -69,6 +69,10 @@ class VirtualEdgeIterator implements EdgeIterator, CHEdgeIteratorState {
         return edges.get(current).getEdge();
     }
 
+    public int getOriginalEdge() {
+        return edges.get(current).getOriginalEdge();
+    }
+
     @Override
     public int getBaseNode() {
         return edges.get(current).getBaseNode();

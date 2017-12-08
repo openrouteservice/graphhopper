@@ -36,6 +36,7 @@ public interface EdgeIteratorState {
      */
     int getEdge();
 
+    int getOriginalEdge();
     /**
      * Returns the node used to instantiate the EdgeIterator. Example: "EdgeIterator iter =
      * graph.getEdges(baseNode)". Often only used for convenience reasons. Do not confuse this with

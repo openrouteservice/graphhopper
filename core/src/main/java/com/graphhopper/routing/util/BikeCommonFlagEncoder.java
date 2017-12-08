@@ -632,6 +632,29 @@ abstract public class BikeCommonFlagEncoder extends AbstractFlagEncoder {
         return wayTypeEncoder.setValue(encoded, wayType.getValue());
     }
 
+    // TODO: in the applyWayTags methof set
+    /*
+    if (prevEdgeId != edge.getOriginalEdge()) {
+                    String incline = way.getTag("incline");
+                    if (!Helper.isEmpty(incline)) {
+                        incline = incline.replace("%", "").replace(",", ".");
+
+                        try {
+                            double v = Double.parseDouble(incline);
+
+                            splits.clear();
+                            RouteSplit split = new RouteSplit();
+                            split.Length = fullDist2D;
+                            split.Gradient = v;
+                        } catch (Exception ex) {
+                            SteepnessUtil.computeRouteSplits(pl, false, distCalc, splits);
+                        }
+                    } else
+                        SteepnessUtil.computeRouteSplits(pl, false, distCalc, splits);
+
+                    prevEdgeId = edge.getOriginalEdge();
+                }
+     */
     @Override
     public long setBool(long flags, int key, boolean value) {
         switch (key) {

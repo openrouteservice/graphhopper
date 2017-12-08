@@ -165,12 +165,13 @@ public class DijkstraBidirectionRef extends AbstractBidirAlgo {
                 continue;
 
             int traversalId = traversalMode.createTraversalId(iter, reverse);
-            double tmpWeight = weighting.calcWeight(iter, reverse, currEdge.edge) + currEdge.weight;
+            double tmpWeight = weighting.calcWeight(iter, reverse, currEdge.originalEdge) + currEdge.weight;
             if (Double.isInfinite(tmpWeight))
                 continue;
             SPTEntry ee = bestWeightMap.get(traversalId);
             if (ee == null) {
                 ee = new SPTEntry(iter.getEdge(), iter.getAdjNode(), tmpWeight);
+                ee.originalEdge = iter.getOriginalEdge();
                 ee.parent = currEdge;
                 bestWeightMap.put(traversalId, ee);
                 prioQueue.add(ee);

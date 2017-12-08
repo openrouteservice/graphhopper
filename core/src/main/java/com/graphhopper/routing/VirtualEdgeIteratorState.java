@@ -32,6 +32,7 @@ import com.graphhopper.util.PointList;
 public class VirtualEdgeIteratorState implements EdgeIteratorState, CHEdgeIteratorState {
     private final PointList pointList;
     private final int edgeId;
+    private final int originalEdgeId;
     private final int baseNode;
     private final int adjNode;
     private final int originalTraversalKey;
@@ -42,9 +43,10 @@ public class VirtualEdgeIteratorState implements EdgeIteratorState, CHEdgeIterat
     private boolean unfavored;
     private EdgeIteratorState reverseEdge;
 
-    public VirtualEdgeIteratorState(int originalTraversalKey, int edgeId, int baseNode, int adjNode, double distance, long flags, String name, PointList pointList) {
+    public VirtualEdgeIteratorState(int originalTraversalKey, int edgeId, int originalEdgeId, int baseNode, int adjNode, double distance, long flags, String name, PointList pointList) {
         this.originalTraversalKey = originalTraversalKey;
         this.edgeId = edgeId;
+        this.originalEdgeId = originalEdgeId;
         this.baseNode = baseNode;
         this.adjNode = adjNode;
         this.distance = distance;
@@ -68,6 +70,9 @@ public class VirtualEdgeIteratorState implements EdgeIteratorState, CHEdgeIterat
     public int getEdge() {
         return edgeId;
     }
+
+    @Override
+    public int getOriginalEdge() { return originalEdgeId; }
 
     @Override
     public int getBaseNode() {
