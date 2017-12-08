@@ -82,7 +82,8 @@ public class ViaRoutingTemplate extends AbstractRoutingTemplate implements Routi
     }
 
     @Override
-    public List<Path> calcPaths(QueryGraph queryGraph, RoutingAlgorithmFactory algoFactory, AlgorithmOptions algoOpts) {
+    public List<Path> calcPaths(QueryGraph queryGraph, RoutingAlgorithmFactory algoFactory, AlgorithmOptions algoOpts,
+                                PathProcessingContext pathProcCntx) {
         long visitedNodesSum = 0L;
         boolean viaTurnPenalty = ghRequest.getHints().getBool(Routing.PASS_THROUGH, false);
         int pointCounts = ghRequest.getPoints().size();
@@ -141,18 +142,17 @@ public class ViaRoutingTemplate extends AbstractRoutingTemplate implements Routi
 
         ghResponse.getHints().put("visited_nodes.sum", visitedNodesSum);
         ghResponse.getHints().put("visited_nodes.average", (float) visitedNodesSum / (pointCounts - 1));
-
         return pathList;
     }
 
     @Override
-    public boolean isReady(PathMerger pathMerger, Translation tr) {
+    public boolean isReady(PathMerger pathMerger, PathProcessingContext pathProcCntx) {
         if (ghRequest.getPoints().size() - 1 != pathList.size())
             throw new RuntimeException("There should be exactly one more points than paths. points:" + ghRequest.getPoints().size() + ", paths:" + pathList.size());
 
         altResponse.setWaypoints(getWaypoints());
         ghResponse.add(altResponse);
-        pathMerger.doWork(altResponse, pathList, tr);
+        pathMerger.doWork(altResponse, pathList, pathProcCntx);
         return true;
     }
 

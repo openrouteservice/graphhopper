@@ -1060,7 +1060,9 @@ public class GraphHopper implements GraphHopperAPI {
                         hints(hints).
                         build();
 
-                altPaths = routingTemplate.calcPaths(queryGraph, tmpAlgoFactory, algoOpts);
+                PathProcessingContext pathProcCntx = new PathProcessingContext(tr, request.getPathProcessor());
+
+                altPaths = routingTemplate.calcPaths(queryGraph, tmpAlgoFactory, algoOpts, pathProcCntx);
 
                 boolean tmpEnableInstructions = hints.getBool(Routing.INSTRUCTIONS, enableInstructions);
                 boolean tmpCalcPoints = hints.getBool(Routing.CALC_POINTS, calcPoints);
@@ -1074,7 +1076,7 @@ public class GraphHopper implements GraphHopperAPI {
                         setPathDetailsBuilders(pathBuilderFactory, request.getPathDetails()).
                         setSimplifyResponse(simplifyResponse && wayPointMaxDistance > 0);
 
-                if (routingTemplate.isReady(pathMerger, tr))
+                if (routingTemplate.isReady(pathMerger, pathProcCntx))
                     break;
             }
 

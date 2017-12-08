@@ -77,7 +77,7 @@ public class PathMerger {
         return this;
     }
 
-    public void doWork(PathWrapper altRsp, List<Path> paths, Translation tr, PathProcessingContext procCntx) {
+    public void doWork(PathWrapper altRsp, List<Path> paths, PathProcessingContext procCntx) {
         int origPoints = 0;
         long fullTimeInMillis = 0;
         double fullWeight = 0;
@@ -89,11 +89,12 @@ public class PathMerger {
             pathProcessor.init(procCntx);
         }
 
-        InstructionList fullInstructions = new InstructionList(tr);
+        InstructionList fullInstructions = new InstructionList(procCntx.getTranslation());
         PointList fullPoints = PointList.EMPTY;
         List<String> description = new ArrayList<>();
         for (int pathIndex = 0; pathIndex < paths.size(); pathIndex++) {
             Path path = paths.get(pathIndex);
+            procCntx.setPathIndex(pathIndex);
             if (!path.isFound()) {
                 allFound = false;
                 continue;
@@ -103,7 +104,7 @@ public class PathMerger {
             fullDistance += path.getDistance();
             fullWeight += path.getWeight();
             if (enableInstructions) {
-                InstructionList il = path.calcInstructions(tr);
+                InstructionList il = path.calcInstructions(procCntx);
 
                 if (!il.isEmpty()) {
                     fullInstructions.addAll(il);
@@ -140,6 +141,10 @@ public class PathMerger {
         }
 
         if (!fullPoints.isEmpty()) {
+            if(pathProcessor != null) {
+                fullPoints = pathProcessor.processPoints(fullPoints);
+            }
+
             String debug = altRsp.getDebugInfo() + ", simplify (" + origPoints + "->" + fullPoints.getSize() + ")";
             altRsp.addDebugInfo(debug);
             if (fullPoints.is3D)

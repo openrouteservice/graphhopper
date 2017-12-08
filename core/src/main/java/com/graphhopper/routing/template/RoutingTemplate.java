@@ -17,14 +17,10 @@
  */
 package com.graphhopper.routing.template;
 
-import com.graphhopper.routing.AlgorithmOptions;
-import com.graphhopper.routing.Path;
-import com.graphhopper.routing.QueryGraph;
-import com.graphhopper.routing.RoutingAlgorithmFactory;
+import com.graphhopper.routing.*;
 import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.PathMerger;
-import com.graphhopper.util.Translation;
 import com.graphhopper.util.shapes.GHPoint;
 
 import java.util.List;
@@ -45,13 +41,14 @@ public interface RoutingTemplate {
      * This method returns a list of Path objects which then can be merged to serve one route with
      * via points or multiple alternative paths.
      */
-    List<Path> calcPaths(QueryGraph queryGraph, RoutingAlgorithmFactory algoFactory, AlgorithmOptions algoOpts);
+    List<Path> calcPaths(QueryGraph queryGraph, RoutingAlgorithmFactory algoFactory, AlgorithmOptions algoOpts,
+                         PathProcessingContext pathProcCntx);
 
     /**
      * This method merges the returned paths appropriately e.g. all paths from the list into one
      * PathWrapper of GHResponse or multiple (via / round trip).
      */
-    boolean isReady(PathMerger pathMerger, Translation tr);
+    boolean isReady(PathMerger pathMerger, PathProcessingContext pathProcCntx);
 
     /**
      * This method returns the maximum number of full retries of these 3 steps

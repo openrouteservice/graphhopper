@@ -11,16 +11,25 @@ import com.graphhopper.util.Translation;
  * through the route generation process
  */
 public class PathProcessingContext {
-    private PathProcessor pathProcessor;
+    private PathProcessor _pathProcessor;
+    private Translation _translation;
+    private int _pathIndex = 0;
 
-    public PathProcessingContext()
+    public PathProcessingContext(Translation tr)
     {
-        this(null);
+        this(tr,null);
     }
 
-    public PathProcessingContext(PathProcessor pathProcessor) {
-        this.pathProcessor = pathProcessor;
+    public PathProcessingContext(Translation tr, PathProcessor pathProcessor) {
+        this._translation = tr;
+        this._pathProcessor = pathProcessor;
     }
 
-    public PathProcessor getPathProcessor() { return pathProcessor; }
+    public PathProcessor getPathProcessor() { return _pathProcessor; }
+
+    public Translation getTranslation() { return _translation; }
+
+    public int getPathIndex() { return _pathIndex; }
+
+    public void setPathIndex(int pathIndex) { this._pathIndex = pathIndex; }
 }

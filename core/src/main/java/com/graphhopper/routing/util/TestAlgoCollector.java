@@ -78,7 +78,9 @@ public class TestAlgoCollector {
                 setSimplifyResponse(false).
                 setEnableInstructions(true);
         PathWrapper rsp = new PathWrapper();
-        pathMerger.doWork(rsp, altPaths, trMap.getWithFallBack(Locale.US));
+
+        PathProcessingContext pathProcCntx = new PathProcessingContext(trMap.getWithFallBack(Locale.US), null);
+        pathMerger.doWork(rsp, altPaths, pathProcCntx);
 
         if (rsp.hasErrors()) {
             errors.add("response for " + algoEntry + " contains errors. Expected distance: " + oneRun.getDistance()

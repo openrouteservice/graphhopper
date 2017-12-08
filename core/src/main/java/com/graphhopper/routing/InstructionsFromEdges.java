@@ -38,7 +38,6 @@ public class InstructionsFromEdges implements Path.EdgeVisitor {
     private final FlagEncoder encoder;
     private final NodeAccess nodeAccess;
 
-    private final Translation tr;
     private final InstructionList ways;
     /*
      * We need three points to make directions
@@ -73,11 +72,13 @@ public class InstructionsFromEdges implements Path.EdgeVisitor {
     private EdgeExplorer outEdgeExplorer;
     private EdgeExplorer crossingExplorer;
 
-    public InstructionsFromEdges(int tmpNode, Graph graph, Weighting weighting, FlagEncoder encoder, NodeAccess nodeAccess, Translation tr, InstructionList ways) {
+    private PathProcessingContext pathProcCntx;
+
+    public InstructionsFromEdges(int tmpNode, Graph graph, Weighting weighting, FlagEncoder encoder, NodeAccess nodeAccess, PathProcessingContext pathProcCntx, InstructionList ways) {
         this.weighting = weighting;
         this.encoder = encoder;
         this.nodeAccess = nodeAccess;
-        this.tr = tr;
+        this.pathProcCntx = pathProcCntx;
         this.ways = ways;
         prevLat = this.nodeAccess.getLatitude(tmpNode);
         prevLon = this.nodeAccess.getLongitude(tmpNode);
@@ -113,7 +114,7 @@ public class InstructionsFromEdges implements Path.EdgeVisitor {
         }
 
         String name = edge.getName();
-        InstructionAnnotation annotation = encoder.getAnnotation(flags, tr);
+        InstructionAnnotation annotation = encoder.getAnnotation(flags, pathProcCntx.getTranslation());
 
         if ((prevName == null) && (!isRoundabout)) // very first instruction (if not in Roundabout)
         {

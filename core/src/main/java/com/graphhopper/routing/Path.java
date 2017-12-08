@@ -355,18 +355,24 @@ public class Path {
         return points;
     }
 
+
     /**
      * @return the list of instructions for this path.
      */
     public InstructionList calcInstructions(final Translation tr) {
-        final InstructionList ways = new InstructionList(edgeIds.size() / 4, tr);
+        PathProcessingContext pathProcCntx = new PathProcessingContext(tr, null);
+        return calcInstructions(pathProcCntx);
+    }
+
+    public InstructionList calcInstructions(PathProcessingContext procCntx) {
+        final InstructionList ways = new InstructionList(edgeIds.size() / 4, procCntx.getTranslation());
         if (edgeIds.isEmpty()) {
             if (isFound()) {
                 ways.add(new FinishInstruction(nodeAccess, endNode));
             }
             return ways;
         }
-        forEveryEdge(new InstructionsFromEdges(getFromNode(), graph, weighting, encoder, nodeAccess, tr, ways));
+        forEveryEdge(new InstructionsFromEdges(getFromNode(), graph, weighting, encoder, nodeAccess, procCntx, ways));
         return ways;
     }
 
