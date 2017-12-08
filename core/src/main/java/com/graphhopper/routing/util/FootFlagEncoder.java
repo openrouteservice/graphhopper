@@ -341,7 +341,7 @@ public class FootFlagEncoder extends AbstractFlagEncoder {
      * @param weightToPrioMap associate a weight with every priority. This sorted map allows
      *                        subclasses to 'insert' more important priorities as well as overwrite determined priorities.
      */
-    void collect(ReaderWay way, TreeMap<Double, Integer> weightToPrioMap) {
+    protected void collect(ReaderWay way, TreeMap<Double, Integer> weightToPrioMap) {
         String highway = way.getTag("highway");
         if (way.hasTag("foot", "designated"))
             weightToPrioMap.put(100d, PREFER.getValue());
