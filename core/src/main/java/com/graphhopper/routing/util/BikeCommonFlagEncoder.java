@@ -717,7 +717,7 @@ abstract public class BikeCommonFlagEncoder extends AbstractFlagEncoder {
         bikeNetworkToCode.put(network, code);
     }
 
-    void addPushingSection(String highway) {
+    protected void addPushingSection(String highway) {
         pushingSectionsHighways.add(highway);
     }
 
