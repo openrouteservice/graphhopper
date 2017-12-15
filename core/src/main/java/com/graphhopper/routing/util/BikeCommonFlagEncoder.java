@@ -59,7 +59,7 @@ abstract public class BikeCommonFlagEncoder extends AbstractFlagEncoder {
     private long unpavedBit = 0;
     private EncodedValue wayTypeEncoder;
     // Car speed limit which switches the preference from UNCHANGED to AVOID_IF_POSSIBLE
-    private int avoidSpeedLimit;
+    protected int avoidSpeedLimit;
 
     // This is the specific bicycle class
     private String classBicycleKey;
