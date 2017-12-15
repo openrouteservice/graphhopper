@@ -152,7 +152,7 @@ public class RacingBikeFlagEncoder extends BikeCommonFlagEncoder {
     }
 
     @Override
-    boolean isPushingSection(ReaderWay way) {
+    protected boolean isPushingSection(ReaderWay way) {
         String highway = way.getTag("highway");
         String trackType = way.getTag("tracktype");
         return way.hasTag("highway", pushingSectionsHighways)

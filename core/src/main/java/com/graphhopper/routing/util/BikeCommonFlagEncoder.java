@@ -662,7 +662,7 @@ abstract public class BikeCommonFlagEncoder extends AbstractFlagEncoder {
         }
     }
 
-    boolean isPushingSection(ReaderWay way) {
+    protected boolean isPushingSection(ReaderWay way) {
         return way.hasTag("highway", pushingSectionsHighways) || way.hasTag("railway", "platform") || way.hasTag("bicycle", "dismount");
     }
 
