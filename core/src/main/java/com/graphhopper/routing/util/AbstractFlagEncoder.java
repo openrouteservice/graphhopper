@@ -140,6 +140,8 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
         this.blockByDefault = blockByDefault;
     }
 
+    public boolean isBlockByDefault() { return blockByDefault; }
+
     public boolean isBlockFords() {
         return blockFords;
     }
